@@ -1,0 +1,22 @@
+Humming Project Notes:
+
+Song choice (tentative):
+1 - Michael Jackson: Thriller
+2 - Survivor: Eye of the Tiger
+3 - One Direction: What Makes You Beautiful
+4 - Queen: We Are The Champions
+5 - Frozen: Let It Go
+
+sampling rate = 44.1kHz
+10s audio clips, stride=8
+audio normalized
+
+-Problem framed as multi-class classifcation: using image classifier to classify melspectrograms 
+-Song choice distinct due to limited dataset, hopefully generalises well to unforeseen data
+-Each song name -- natively a string -- labelled 1-5 (given in blue); one-hot vectors created for each song;
+-Audio passes through CNN - output is softmax layer, and label will be argmax of highest probability in softmax vector
+-Typical softmax loss function optmised
+-Train/Dev/Test split: will try 60/20/20, 80/10/10; can generate a lot of data from audio sampling, so can probably go with higher
+train size
+-Model app: Can process audio of any length, but will take as input first 5 seconds of input; then, audio passes to model, outputs
+prediction on song 1-5
