@@ -1,5 +1,0 @@
-.DS_store
-__pycache__
-csv_txt
-your_*
-models
