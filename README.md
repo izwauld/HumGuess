@@ -1,7 +1,7 @@
 # HumGuess - Multi-class classification ML project
 
 In this repository, you will find helpful notebooks detailing the HumGuess project - where a machine learning approach is used to
-predict what song someone is singing/humming. The approach used was inspired by work done by John Hartquist on an experimental [fast.ai audio classification module](https://towardsdatascience.com/audio-classification-using-fastai-and-on-the-fly-frequency-transforms-4dbe1b540f89), and by a CNN approach to [classifiying MNIST digits](https://medium.com/x8-the-ai-community/audio-classification-using-cnn-coding-example-f9cbd272269e). For a more techincal insight into the methods used, please consult these resources. $$\LaTeX$$
+predict what song someone is singing/humming. The approach used was inspired by work done by John Hartquist on an experimental [fast.ai audio classification module](https://towardsdatascience.com/audio-classification-using-fastai-and-on-the-fly-frequency-transforms-4dbe1b540f89), and by a CNN approach to [classifiying MNIST digits](https://medium.com/x8-the-ai-community/audio-classification-using-cnn-coding-example-f9cbd272269e). For a more techincal insight into the methods used, please consult these resources. $$\L$$
 
 ## Table of Contents
 
@@ -29,10 +29,11 @@ With the high-level introduction out the way, we move onto the setup, where we i
 ## Setup
 
 The following tools/dependencies were used in the project:
-* [Python] - version 3.7.3
-* [Tensorflow] - high-level machine learning framework, version 1.14.0
-* [pydub] - audio package for Python, version 0.23.1
-* [librosa] - audio package for Python, version 0.6.3
+* [Python](https://www.python.org/) - version 3.7.3
+* [Tensorflow](https://www.tensorflow.org/) - high-level machine learning framework, version 1.14.0
+* (recommended)[Anaconda](https://www.anaconda.com/) - Data science distribution (comes with Jupyter notebook), version 4.7.5
+* [pydub](https://pypi.org/project/pydub/) - audio package for Python, version 0.23.1
+* [librosa](https://librosa.github.io/librosa/) - audio package for Python, version 0.6.3
 
 ## Data Generation
 
