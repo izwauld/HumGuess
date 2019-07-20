@@ -1,7 +1,7 @@
 # HumGuess - Multi-class classification ML project
 
 In this repository, you will find helpful notebooks detailing the HumGuess project - where a machine learning approach is used to
-predict what song someone is singing/humming. 
+predict what song someone is singing/humming. The approach used was inspired by work done by John Hartquist on an experimental [fast.ai audio classification module](https://towardsdatascience.com/audio-classification-using-fastai-and-on-the-fly-frequency-transforms-4dbe1b540f89), and by a CNN approach to [classifiying MNIST digits](https://medium.com/x8-the-ai-community/audio-classification-using-cnn-coding-example-f9cbd272269e)To be able to understand the notebooks fully, please follow this README carefully.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ Have you ever been listening to music, and come across a song that you really li
 
 So, let's harness that!
 
-The purpose of this project is to build a machine learning system that will be able to predict what song you are singing or humming. For this project, I framed the problem as a superivised, multi-label classification problem. The ML model is trained to predict one of five songs, where you input an audio clip into the ML algorithm, and it spits out a probability that the clip refers to one of the five songs.
+The purpose of this project is to build a machine learning system that will be able to predict what song you are singing or humming. For this project, I framed the problem as a supervised, multi-label classification problem. Basically, The ML model is trained to predict one of five songs, where you input an audio clip into the ML algorithm, and it spits out a probability that the clip refers to one of the five songs.
 
 The model is trained on only one accent currently, just to demonstrate that this sort of approach can work. Ideally you would like to train on many voices to make the model more robust, but in fact, the guiding intuition is that the model doesn't really need to be trained on that many voices, just a more varied selection. This is because of the song choice: the songs chosen for this project are easily recognisable (like Michael Jackson - Thriller), so intuitively the frequency patterns of the audio clips should be similar regardless of the singer's accent. This means that you don't necessarily have to train on million's of voices! 
 
@@ -28,7 +28,9 @@ With the high-level introduction out the way, we move onto the setup, where we i
 
 ## Setup
 
+The following dependices were used in the project:
 
 ## Data Generation
+The model is trained on only one accent currently, just to demonstrate that this sort of approach can work. Ideally you would like to train on many voices to make the model more robust, but in fact, the guiding intuition is that the model doesn't really need to be trained on that many voices, just a more varied selection. This is because of the song choice: the songs chosen for this project are easily recognisable (like Michael Jackson - Thriller), so intuitively the frequency patterns of the audio clips should be similar regardless of the singer's accent. This means that you don't necessarily have to train on million's of voices!
 ## Running the CNN
 ## Closing Thoughts
