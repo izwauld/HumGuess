@@ -1,7 +1,7 @@
 # HumGuess - Multi-class classification ML project
 
 In this repository, you will find helpful notebooks detailing the HumGuess project - where a machine learning approach is used to
-predict what song someone is singing/humming. The approach used was inspired by work done by John Hartquist on an experimental [fast.ai audio classification module](https://towardsdatascience.com/audio-classification-using-fastai-and-on-the-fly-frequency-transforms-4dbe1b540f89), and by a CNN approach to [classifiying MNIST digits](https://medium.com/x8-the-ai-community/audio-classification-using-cnn-coding-example-f9cbd272269e). For a more techincal insight into the methods used, please consult those resources.
+predict what song someone is singing/humming. The approach used was inspired by work done by John Hartquist on an experimental [fast.ai audio classification module](https://towardsdatascience.com/audio-classification-using-fastai-and-on-the-fly-frequency-transforms-4dbe1b540f89), and by a CNN approach to [classifiying MNIST digits](https://medium.com/x8-the-ai-community/audio-classification-using-cnn-coding-example-f9cbd272269e). For a more techincal insight into the methods used, please consult these resources.
 
 ## Table of Contents
 
@@ -38,11 +38,16 @@ The following tools/dependencies were used in the project:
 
 The project pipeline looks like this:
 
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
+​```flow
+st=>start: Start
+op=>operation: Your Operation
+cond=>condition: Yes or No?
+e=>end
+
+st->op->cond
+cond(yes)->e
+cond(no)->op
+​```
 
 
 ## Running the CNN
