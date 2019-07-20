@@ -5,9 +5,9 @@ predict what song someone is singing/humming. The approach used was inspired by 
 
 ## Table of Contents
 
-1. [Overview](https://github.com/izwauld/HumGuess#overview)- Introducing the scope of the project
-2. [Setup](https://github.com/izwauld/HumGuess#setup) - Installing the tools
-3. [Data Generation](https://github.com/izwauld/HumGuess#data-generation) - Methodology behind the data generation
+1. [Overview](https://github.com/izwauld/HumGuess#overview)- Motivating the problem
+2. [Setup](https://github.com/izwauld/HumGuess#setup) - Installing tools
+3. [Data Generation](https://github.com/izwauld/HumGuess#data-generation) - Methodology behind data generation
 4. [Running the CNN](https://github.com/izwauld/HumGuess#running-the-cnn) - Introducing CNN architecture, step-by-step
 5. [Closing Thoughts](https://github.com/izwauld/HumGuess#closing-thoughts) - Review of approach, future directions to explore
 
@@ -21,16 +21,21 @@ The purpose of this project is to build a machine learning system that will be a
 
 The model is trained on only one accent currently, just to demonstrate that this sort of approach can work. Ideally you would like to train on many voices to make the model more robust, but in fact, the guiding intuition is that the model doesn't really need to be trained on that many voices, just a more varied selection. This is because of the song choice: the songs chosen for this project are easily recognisable (like Michael Jackson - Thriller), so intuitively the frequency patterns of the audio clips should be similar regardless of the singer's accent. This means that you don't necessarily have to train on million's of voices! 
 
-One major drawback to this approach is scalability: there are millions of songs out there, and more being released every day. This means that in order for this approach to be super robust, the model would have to be able to correctly identify millions of songs, but even if you got that to work, the model would need to be retrained every time to account for new songs being released. So clearly, that isn't feasible!
+One major drawback to this approach is scalability: there are millions of songs out there, and more being released every day. This means that in order for this approach to be super robust, the model would have to be able to correctly identify millions of songs, but even if you got that to work, it would need to be retrained every time to account for new songs being released. So clearly, that isn't feasible!
 
 With the high-level introduction out the way, we move onto the setup, where we introdcue the packages and dependencies that are needed.
 
 
 ## Setup
 
-The following dependices were used in the project:
+The following tools/dependencies were used in the project:
+* [Python] - version 3.7.3
+* [Tensorflow] - high-level machine learning framework, version 1.14.0
+* [pydub] - audio package for Python, version 0.23.1
+* [librosa] - audio package for Python, version 0.6.3
 
 ## Data Generation
-The model is trained on only one accent currently, just to demonstrate that this sort of approach can work. Ideally you would like to train on many voices to make the model more robust, but in fact, the guiding intuition is that the model doesn't really need to be trained on that many voices, just a more varied selection. This is because of the song choice: the songs chosen for this project are easily recognisable (like Michael Jackson - Thriller), so intuitively the frequency patterns of the audio clips should be similar regardless of the singer's accent. This means that you don't necessarily have to train on million's of voices!
+
+
 ## Running the CNN
 ## Closing Thoughts
