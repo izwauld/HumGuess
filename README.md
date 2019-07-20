@@ -12,7 +12,23 @@ predict what song someone is singing/humming.
 5. [Closing Thoughts](https://github.com/izwauld/HumGuess#closing-thoughts) - Review of approach, future directions to explore
 
 ## Overview
+
+Have you ever been listening to music, and come across a song that you really like the sound of, but you don't know the name of it? You might pick up on some of the lyrics of the song, but it isn't enough to be able to know what the song name is. If the song is popular enough, you may be able to type in the lyrics into some search engine and it will fetch the song for you, but that isn't always a reliable way to get the name of the song. If you play the song to Shazam or Google, it might be able to recgonise it for you. But now it's too late - the song has passed. All you have to go off of is the beat that is stuck in your head.
+
+So, let's harness that!
+
+The purpose of this project is to build a machine learning system that will be able to predict what song you are singing or humming. For this project, I framed the problem as a superivised, multi-label classification problem. The ML model is trained to predict one of five songs, where you input an audio clip into the ML algorithm, and it spits out a probability that the clip refers to one of the five songs.
+
+The model is trained on only one accent currently, just to demonstrate that this sort of approach can work. Ideally you would like to train on many voices to make the model more robust, but in fact, the guiding intuition is that the model doesn't really need to be trained on that many voices, just a more varied selection. This is because of the song choice: the songs chosen for this project are easily recognisable (like Michael Jackson - Thriller), so intuitively the frequency patterns of the audio clips should be similar regardless of the singer's accent. This means that you don't necessarily have to train on million's of voices! 
+
+One major drawback to this approach is scalability: there are millions of songs out there, and more being released every day. This means that in order for this approach to be super robust, the model would have to be able to correctly identify millions of songs, but even if you got that to work, the model would need to be retrained every time to account for new songs being released. So clearly, that isn't feasible!
+
+With the high-level introduction out the way, we move onto the setup, where we introdcue the packages and dependencies that are needed.
+
+
 ## Setup
+
+
 ## Data Generation
 ## Running the CNN
 ## Closing Thoughts
