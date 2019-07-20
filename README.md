@@ -5,11 +5,11 @@ predict what song someone is singing/humming. The approach used was inspired by 
 
 ## Table of Contents
 
-1. [Overview](https://github.com/izwauld/HumGuess#overview)- Motivating the problem
-2. [Setup](https://github.com/izwauld/HumGuess#setup) - Installing tools
-3. [Data Generation](https://github.com/izwauld/HumGuess#data-generation) - Methodology behind data generation
-4. [Running the CNN](https://github.com/izwauld/HumGuess#running-the-cnn) - Introducing CNN architecture, step-by-step
-5. [Closing Thoughts](https://github.com/izwauld/HumGuess#closing-thoughts) - Review of approach, future directions to explore
+1. [Overview](https://github.com/izwauld/HumGuess#overview)
+2. [Setup](https://github.com/izwauld/HumGuess#setup)
+3. [Data Generation](https://github.com/izwauld/HumGuess#data-generation)
+4. [Running the CNN](https://github.com/izwauld/HumGuess#running-the-cnn) 
+5. [Closing Thoughts](https://github.com/izwauld/HumGuess#closing-thoughts)
 
 ## Overview
 
@@ -23,7 +23,7 @@ The model is trained on only one accent currently, just to demonstrate that this
 
 One major drawback to this approach is scalability: there are millions of songs out there, and more being released every day. This means that in order for this approach to be super robust, the model would have to be able to correctly identify millions of songs, but even if you got that to work, it would need to be retrained every time to account for new songs being released. So clearly, that isn't feasible!
 
-With the high-level introduction out the way, we move onto the setup, where we introdcue the packages and dependencies that are needed.
+With the high-level introduction out the way, we move onto the setup, where we introduce the packages and dependencies that are needed.
 
 
 ## Setup
@@ -34,6 +34,7 @@ The following tools/dependencies were used in the project:
 * (recommended) [Anaconda](https://www.anaconda.com/) - Data science distribution (comes with Jupyter notebook), version 4.7.5
 * [pydub](https://pypi.org/project/pydub/) - audio package for Python, version 0.23.1
 * [librosa](https://librosa.github.io/librosa/) - audio package for Python, version 0.6.3
+
 
 ## Data Generation
 
@@ -94,6 +95,7 @@ What follows are more preprocessing steps (storing a % of images away as test da
 
 That concludes the discussion on how the input data is generated. Now, we showcase the structure of the CNN model.
 
+
 ## Running the CNN
 
 Here, [Keras](https://keras.io/) was used to build the model. The architecture of the model is shown here (see `cnn_architecture.py` also):
@@ -127,6 +129,22 @@ where `X_train` contains the image arrays and `y_train_oh` is the [one-hot encod
 After the model runs, we save the output model and make a prediction on the test set (see `TestModel.ipynb`):
 
 ```python
+model = load_model(model_path)
 
+predictions = model.predict(X_test)
+predictions = np.argmax(predictions, axis=1) + 1
+predictions = predictions.reshape(len(ms_df_test),1)
+
+#Calculate the difference between the predictions and true labels, then find where the difference is 0 (correct predictions) 
+diff_array = predictions - y_test
+correct_preds = diff_array[diff_array == 0]
+
+#Finally, calculate the accuracy of the model on the test data
+acc_percent = (len(correct_preds) / len(diff_array)) * 100
+print(acc_percent)
 ```
+
+
 ## Closing Thoughts
+
+The model performed well, consistently performing 90%+ when I tried it out. As mentioned earlier, the model could be more robust if trained on a more varied dataset (female voice, richer accent variety, etc.) so that could be a cool avenue to explore. Overall, this was a fun little project to work on :-)
