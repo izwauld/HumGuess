@@ -31,7 +31,7 @@ With the high-level introduction out the way, we move onto the setup, where we i
 The following tools/dependencies were used in the project:
 * [Python](https://www.python.org/) - version 3.7.3
 * [Tensorflow](https://www.tensorflow.org/) - high-level machine learning framework, version 1.14.0
-* (recommended)[Anaconda](https://www.anaconda.com/) - Data science distribution (comes with Jupyter notebook), version 4.7.5
+* (recommended) [Anaconda](https://www.anaconda.com/) - Data science distribution (comes with Jupyter notebook), version 4.7.5
 * [pydub](https://pypi.org/project/pydub/) - audio package for Python, version 0.23.1
 * [librosa](https://librosa.github.io/librosa/) - audio package for Python, version 0.6.3
 
@@ -41,7 +41,8 @@ The project pipeline looks like this:
 
 As can be seen, the first step is to create the input data, namely the mel-spectrograms that will be fed into the CNN. All operations are sheltered under the`generate_data` function in `util_functs.py`, but I will go through the indiviidual steps of the data generation anyway.
 
-The first task is to create our input clips from which mel-spectrograms are produced. The clips are 6 seconds in length, a number I found to be reasonably short enough for song prediction. This code snippet illustrates the clip generation process:
+
+The first task is to create our **input clips** from which mel-spectrograms are produced. The clips are 6 seconds in length (a number I found to be reasonably short enough for song prediction, but it is tunable). This code snippet illustrates the clip generation process:
 
 ```python
 from pydub import AudioSegment
@@ -58,8 +59,74 @@ for t in range(num_clips):
 ```
 This was taken from the `audio_splice` function in `util_functs.py`. Essentially, we load the song into memory, the length of which is represented in milliseconds (it's a pydub thing) and slide along it, extracting 6-esecond snippets at each step and saving them. 
 
-If you have knowledge of how CNNs work, you know that once the "filter" or "kernel" has performed the convolution operation on area of the input image, it steps along to the next area of the image with a certain stride. The output size of the convolution operation, (assuming no [padding](https://medium.com/@ayeshmanthaperera/what-is-padding-in-cnns-71b21fb0dd7)) is defined by $$n-f/ s + 1$$, where `f` is the filter size. Although these are audio clips and not images, the same rule can be applied to a 1D temporal data stream (ie. an audio clip). We just take `n` to be the length of the raw audio song file, `f` to be the desired clip length, and `s` to be the step size when sliding along the audio file. 
+If you have knowledge of how CNNs work, you know that once the "filter" or "kernel" has performed the convolution operation on an area of the input image, it steps along to the next area with a certain stride. The output size of the convolution operation, (assuming no [padding](https://medium.com/@ayeshmanthaperera/what-is-padding-in-cnns-71b21fb0dd7)), is defined as `|(n - f) / s| + 1` (| refers to the "floor" operation here), where `f` is the filter size. Although these are audio clips and not images, the same rule can be applied to a 1D temporal data stream (ie. an audio clip). We just take `n` to be the length of the raw audio song file, `f` to be the desired clip length, and `s` to be the step size when sliding along the audio file. 
 
+
+Next, we generate the **mel-spectrograms**. These are plots of the most common frequencies from the input audio signals, mapped to a logarithmic scale (or "mel" scale) since these humans process noise on these scales. The code snippet below illustrates how the plots are generated:
+
+```python
+    
+   import librosa, librosa.display
+   from os import splitext
+   my_dpi=96
+   
+   fname = splitext(clip_path)[0]
+   label = clip_path[0]
+        
+   clip, sample_rate = librosa.load(clip_path, sr=None)
+   mel_spec = librosa.feature.melspectrogram(clip, n_fft=n_fft, hop_length=n_hop,
+                                          n_mels=n_mels, sr=sample_rate, power=1.0, 
+                                          fmin=fmin, fmax=fmax)
+   mel_spec_db = librosa.amplitude_to_db(mel_spec, ref=np.max)
+        
+   plt.figure(figsize=(50/my_dpi, 34/my_dpi), dpi=my_dpi) #(34,50)
+   librosa.display.specshow(mel_spec_db,
+                                 sr=sample_rate, hop_length=n_hop,
+                                 fmin=fmin, fmax=fmax)
+   plt.savefig(melspec_output_path)
+   plt.close()
+```
+
+This has been adapted from the more general-purpose function `generate_mel_specs` in `util_functs.py` to show how a single image would be created and saved. The `clip_path` and `melspec_output_path` variables should be self-explanatory.
+
+
+What follows are more preprocessing steps (storing a % of images away as test data, creating pandas dataframe containing filename-label pairs, then creating a .h5 file consisting of image-label data). You can find the details of these steps in the `GenerateData.ipynb` notebook.
+
+That concludes the discussion on how the input data is generated. Now, we showcase the structure of the CNN model.
 
 ## Running the CNN
+
+Here, [Keras](https://keras.io/) was used to build the model. The architecture of the model is shown here (see `cnn_architecture.py` also):
+
+```python
+model = Sequential()
+model.add(Conv2D(32, kernel_size=(3,3), 
+                 activation='relu', input_shape=X_train[1].shape))
+model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(Conv2D(64, kernel_size=(3,3), 
+                 activation='relu'))
+model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(Dropout(rate=0.20))
+model.add(Flatten())
+model.add(Dense(128, activation='relu'))
+model.add(Dropout(rate=0.50))
+model.add(Dense(5, activation='softmax'))
+```
+
+This architecture was taken from the 'classifiying MNIST digits' reference given above. The only difference is the addition of another pooling layer after the second Conv2D layer. This architecture has proved to work well for this task (as you will see). The final softmax layer should come as no surprise - the final output layer should be a vector of proabilities assigned to each label, which is what the softmax vector is. The two dropout layers help to prevent the model from becoming too reliant on any single input features (having a "regularizing" effect). 
+
+The model is then compiled and run as follows:
+
+```python
+model.compile(loss = "categorical_crossentropy", optimizer = 'adam',
+              metrics=['accuracy'])
+model.fit(X_train, y_train_oh, batch_size=16, epochs=50, verbose=1, validation_split=0.20)
+```
+where `X_train` contains the image arrays and `y_train_oh` is the [one-hot encoding](https://machinelearningmastery.com/why-one-hot-encode-data-in-machine-learning/) of the labels. `validation_split=0.20` means that 20% of the data is used as the validation set.
+
+After the model runs, we save the output model and make a prediction on the test set (see `TestModel.ipynb`):
+
+```python
+
+```
 ## Closing Thoughts
