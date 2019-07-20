@@ -38,16 +38,26 @@ The following tools/dependencies were used in the project:
 
 The project pipeline looks like this:
 
-​```flow
-st=>start: Start
-op=>operation: Your Operation
-cond=>condition: Yes or No?
-e=>end
+As can be seen, the first step is to create the input data, namely the mel-spectrograms that will be fed into the CNN. All operations are sheltered under the`generate_data` function in `util_functs.py`, but I will go through the indiviidual steps of the data generation anyway.
 
-st->op->cond
-cond(yes)->e
-cond(no)->op
-​```
+The first task is to create our input clips from which mel-spectrograms are produced. The clips are 6 seconds in length, a number I found to be reasonably short enough for song prediction. This code snippet illustrates the clip generation process:
+
+```python
+from pydub import AudioSegment
+
+song = AudioSegment.from_wav(song_path) #extract audio
+
+STRIDE = stride * 1000 #pydub works in ms
+CLIP_LENGTH = clip_length * 1000 #pydub works in ms
+num_clips = math.floor((len(song) - CLIP_LENGTH) / STRIDE) + 1
+
+for t in range(num_clips):
+    clip = song[STRIDE*t:CLIP_LENGTH + STRIDE*t]
+    clip.export(output_path + "clip" + str(t) + ".wav", format="wav")
+```
+This was taken from the `audio_splice` function in `util_functs.py`. Essentially, we load the song into memory, the length of which is represented in milliseconds (it's a pydub thing). 
+
+If you have knowledge of how CNNs work, you know that once the "filter" or "kernel" has performed the convolution operation on area of the input image, it steps along to the next area of the image with a certain stride. The output size of the convolution operation, (assuming no [padding](https://medium.com/@ayeshmanthaperera/what-is-padding-in-cnns-71b21fb0dd7)) is defined by $$((n-f) / s) + 1$$, where `f` is the filter size. Although these are audio clips and not images, the same rule can be applied to a 1D temporal data stream (ie. an audio clip). We just take `n` to be the length of the raw audio song file, `f` to be the desired clip length, and `s` to be the step size when sliding along the audio file. 
 
 
 ## Running the CNN
