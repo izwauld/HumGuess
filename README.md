@@ -19,7 +19,7 @@ So, let's harness that!
 
 The purpose of this project is to build a machine learning system that will be able to predict what song you are singing or humming. For this project, I framed the problem as a supervised, multi-label classification problem. Basically, The ML model is trained to predict one of five songs, where you input an audio clip into the ML algorithm, and it spits out a probability that the clip refers to one of the five songs.
 
-The model is trained on only one accent currently, just to demonstrate that this sort of approach can work. Ideally you would like to train on many voices to make the model more robust, but in fact, the guiding intuition is that the model doesn't really need to be trained on that many voices, just a more varied selection. This is because of the song choice: the songs chosen for this project are easily recognisable (like Michael Jackson - Thriller), so intuitively the frequency patterns of the audio clips should be similar regardless of the singer's accent. This means that you don't necessarily have to train on million's of voices! 
+The model is trained on three accents currently, just to demonstrate that this sort of approach can work (relatively) well. Ideally you would like to train on many voices to make the model more robust, but in fact, the guiding intuition is that the model doesn't really need to be trained on that many voices, just a more varied selection. This is because of the song choice: the songs chosen for this project are easily recognisable (like Michael Jackson - Thriller), so intuitively the frequency patterns of the audio clips should be similar regardless of the singer's accent. This means that you don't necessarily have to train on million's of voices! 
 
 One major drawback to this approach is scalability: there are millions of songs out there, and more being released every day. This means that in order for this approach to be super robust, the model would have to be able to correctly identify millions of songs, but even if you got that to work, it would need to be retrained every time to account for new songs being released. So clearly, that isn't feasible!
 
@@ -38,9 +38,7 @@ The following tools/dependencies were used in the project:
 
 ## Data Generation
 
-The project pipeline looks like this:
-
-As can be seen, the first step is to create the input data, namely the mel-spectrograms that will be fed into the CNN. All operations are sheltered under the`generate_data` function in `util_functs.py`, but I will go through the indiviidual steps of the data generation anyway.
+The first step is to create the input data, namely the mel-spectrograms that will be fed into the CNN. All operations are sheltered under the`generate_data` function in `util_functs.py`, but I will go through the indiviidual steps of the data generation anyway.
 
 
 The first task is to create our **input clips** from which mel-spectrograms are produced. The clips are 6 seconds in length (a number I found to be reasonably short enough for song prediction, but it is tunable). This code snippet illustrates the clip generation process:
