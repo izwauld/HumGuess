@@ -145,4 +145,4 @@ print(acc_percent)
 
 ## Closing Thoughts
 
-The model performed well, consistently performing 90%+ when I tried it out. As mentioned earlier, the model could be more robust if trained on a more varied dataset (female voice, richer accent variety, etc.) so that could be a cool avenue to explore. Overall, this was a fun little project to work on :-)
+The model performed well, consistently performing ~80% when I tried it out. As mentioned earlier, the model could be more robust if trained on a more varied dataset (female voice, richer accent variety, etc.) so that could be a cool avenue to explore. Overall, this was a fun little project to work on :-)
