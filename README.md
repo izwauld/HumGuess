@@ -1,4 +1,4 @@
-# HumGuess - Multi-class classification
+# HumGuess - multi-class classification machine learning project
 
 In this repository, you will find helpful notebooks detailing the HumGuess project - where a machine learning approach is used to
 predict what song someone is singing/humming. This projecy was inspired by work from John Hartquist on an experimental [fast.ai audio classification module](https://towardsdatascience.com/audio-classification-using-fastai-and-on-the-fly-frequency-transforms-4dbe1b540f89), and by a CNN approach to [classifiying MNIST digits](https://medium.com/x8-the-ai-community/audio-classification-using-cnn-coding-example-f9cbd272269e). For a more techincal insight into the methods used, please consult these resources.
