@@ -113,8 +113,8 @@ def gen_csv_file(input_dir, csv_name, col_names = [['fname', 'label']]):
        col_names - list, tuple containing column names for csv
     """
     
-    temp_list = listdir(input_dir)
-    input_list = col_names + [[temp_list[i], temp_list[i][0]] for i in range(len(temp_list))]
+    temp_list = listdir(input_dir) #lists the filenames of the contents of input_dir
+    input_list = col_names + [[temp_list[i], temp_list[i][0]] for i in range(len(temp_list))] #Here, temp_list[i] is file name / temp_list[i][0] is the label
     with open(csv_name, 'w') as csvFile:
         writer = csv.writer(csvFile)
         writer.writerows(input_list)
@@ -205,7 +205,9 @@ def generate_data(img_shape, num_classes = 5, cl = 5, s = 1.5, n_fft = 1024, n_h
         generate_melspecs(ac_dir, ms_dir)
 
     if storeTest:
+      #Move the amount of test specified away to the test directory, test_ms_dir
         for j in range(math.floor(test_frac * len(os.listdir(ms_dir)))):
+            #Randomly choose which examples are stored as test
             x = random.sample(os.listdir(ms_dir), 1)
             shutil.move(ms_dir + x[0], test_ms_dir)
         
