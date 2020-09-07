@@ -42,26 +42,6 @@ def audio_splice(song_path, output_path, clip_length, stride):
 
     return num_clips
 
-def one_hot_encode(labels, num_classes):
-    """ Outputs one-hot encoding matrix (matrix of ones/zeros) for
-        given list.
-
-        Inputs:
-           labels: list/array, contains labels/tags, shape=(1,num_examples)
-           num_classes: int, number of different labels/tags
-        Outputs:
-           y_encoded: matrix containing one-hot encodings for labels
-    """
-
-    m = len(labels) #number of examples
-    y_encoded = np.zeros((m, num_classes))
-
-    for i in range(m):
-        y_encoded[i, int(labels[i][0]) - 1] = 1
-
-
-    return y_encoded
-
 def create_audio_clips(input_path, out_path, clip_length=10, stride=8):
     """ Creates a series of audio clips using the audio_splice method,
         (10s clips with stride=8), automatically generating clips from each peron's song.
@@ -79,42 +59,21 @@ def create_audio_clips(input_path, out_path, clip_length=10, stride=8):
         audio_splice(input_path + elem, out_path + label + "_"
                      + initial + "_", clip_length, stride)
 
-def preproc_data(df, col_name, train_pt = 0.80):
-    """Renames fname entries & splits the data into train/dev according to the percentage
-    split train_pt
-    
-    Inputs:
-        df - pandas dataframe, contains the audio_data with fname, label cols
-        col_name - str, name of the column for the filenames
-        train_pt - float (between 0 and 1), percent of data set for training  
-    """
-    num_train = train_pt * len(df[col_name]) 
-    for i in range(len(df[col_name])):
-        if i <= num_train:
-            df.fname[i] = "train/" + df[col_name][i]
-        else:
-            df.fname[i] = "valid/" + df[col_name][i]
-
-def snip_data(folder, num_classes, remlist, song_lengths, offset):
-    
-    folder_list = listdir(folder) 
-    for i in range(1, num_classes):
-        sel = []
-        sel = [f for f in folder_list if f.startswith(str(i))]
-        print(offset)
-        for e in sel:
-            if e.endswith('clip' + str(song_lengths[i-1] - (len(sel) + offset)) + '.wav') or e.endswith('clip' + str(len(sel)-1) + '.wav'):
-                remlist.append(e)
-                
-    
-    for j in range(len(remlist)):
-         os.remove(folder+str(remlist[j]))
-           
-    assert(folder_list[i] != remlist[j] 
-           for i in range(len(folder_list)) for j in range(len(remlist)))
-
 def generate_melspecs(input_dir, ms_output, n_fft=1024, n_hop=256, n_mels=40, fmin=20,
                       fmax=8000, my_dpi=96):
+    """Creates the melspectogram images associated with the input audio clips.
+    
+    Inputs:
+          input_dir: path, location of the input audio clips
+          ms_output: path, desired location of the melspectograms
+          n_fft: int, number of bins for spectogram in which frequency information is collected
+          n_hop: int, hop length determining how many samples we slide along by
+          n_mels: int, number of frequency bins for the mel-spectogram (different from n_fft)
+          fmin: int, minimum frequency in the melspectogram
+          fmax: int, maximum frequency in the melspectogram
+          my_dpi: int, dpi for the images
+          
+    """
     mel_spec_array = []
     label_array = []
     fname_array = []
@@ -160,17 +119,6 @@ def gen_csv_file(input_dir, csv_name, col_names = [['fname', 'label']]):
         writer = csv.writer(csvFile)
         writer.writerows(input_list)
         
-
-def move_wav_to_tvfolders(folder, df, ext):
-    for i in range(len(df.fname)):
-        for file in listdir(folder):
-            if file.endswith(ext) and file in df.fname[i]:
-                os.rename(folder/file, folder/df.fname[i])
-
-def clear_out(folder):
-    if os.path.isdir(folder):
-        shutil.rmtree(folder)
-
 def initialise_data(img_folder, image_shape):
     """Defines the training exmaples/labels based on the shape of the
     input images and the image folder.
@@ -192,7 +140,17 @@ def initialise_data(img_folder, image_shape):
     return X_train, y_train
 
 def gen_input_and_label_array(img_folder, df, image_shape):
+    """Populates the input and label arrays initialised prior with
+    image tensors and image labels, respectively.
     
+    Inputs:
+          img_folder: path, location of the mel-spectograms
+          df: Pandas dataframe, dataframe containing clip name/label information
+          image_shape: tuple, shape of the melspectogram images
+    Outputs:
+          X: array, contains traing examples, shape = (# of examples, image_shape)
+          y: array, conatains labels for training inputs, shape = (# of examples, 1)
+    """
     X, y = initialise_data(img_folder, image_shape)
     
     for j in range(len(df)):
@@ -266,4 +224,3 @@ def generate_data(img_shape, num_classes = 5, cl = 5, s = 1.5, n_fft = 1024, n_h
     X = X / 255
     
     return X, y, ms_df
-
