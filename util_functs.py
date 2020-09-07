@@ -41,7 +41,27 @@ def audio_splice(song_path, output_path, clip_length, stride):
         clip.export(output_path + "clip" + str(t) + ".wav", format="wav")
 
     return num_clips
+  
+def one_hot_encode(labels, num_classes):
+    """ Outputs one-hot encoding matrix (matrix of ones/zeros) for
+        given list.
 
+        Inputs:
+           labels: list/array, contains labels/tags, shape=(1,num_examples)
+           num_classes: int, number of different labels/tags
+        Outputs:
+           y_encoded: matrix containing one-hot encodings for labels
+    """
+
+    m = len(labels) #number of examples
+    y_encoded = np.zeros((m, num_classes))
+
+    for i in range(m):
+        y_encoded[i, int(labels[i][0]) - 1] = 1
+
+
+    return y_encoded
+  
 def create_audio_clips(input_path, out_path, clip_length=10, stride=8):
     """ Creates a series of audio clips using the audio_splice method,
         (10s clips with stride=8), automatically generating clips from each peron's song.
