@@ -1,6 +1,6 @@
 from pydub import AudioSegment
 from pathlib import Path
-import math
+import math, random
 import numpy as np
 import pandas as pd
 import os
@@ -172,6 +172,16 @@ def clear_out(folder):
         shutil.rmtree(folder)
 
 def initialise_data(img_folder, image_shape):
+    """Defines the training exmaples/labels based on the shape of the
+    input images and the image folder.
+    
+    Inputs:
+          img_folder: path, where the melspectograms are located (defines # of examples)
+          image_shape: tuple, the dimensions of the input images
+    Outputs:
+          X_train: array, null array with dimensions (num_examples, image_shape)
+          y_train: array, null target array with dimensions (num_examples, 1)
+    """
     num_specs_train = len(os.listdir(img_folder))
     X_train = np.zeros((num_specs_train, 
                     image_shape[0],
@@ -186,9 +196,10 @@ def gen_input_and_label_array(img_folder, df, image_shape):
     X, y = initialise_data(img_folder, image_shape)
     
     for j in range(len(df)):
-        name = df.fname[j]
-        label = df.label[j]
-        img = imageio.imread(img_folder + name)
+        name = df.fname[j] #name of clip comes from 'fname' column in the dataframe
+        label = df.label[j] #label of clip comes from 'label' column in the dataframe
+        img = imageio.imread(img_folder + name) #numpy array containing image pixel values
+        #Assign img array to the jth training example, assign label to the jth label
         X[j] = img
         y[j] = label
 
@@ -236,20 +247,22 @@ def generate_data(img_shape, num_classes = 5, cl = 5, s = 1.5, n_fft = 1024, n_h
         generate_melspecs(ac_dir, ms_dir)
 
     if storeTest:
-        import random
         for j in range(math.floor(test_frac * len(os.listdir(ms_dir)))):
             x = random.sample(os.listdir(ms_dir), 1)
             shutil.move(ms_dir + x[0], test_ms_dir)
         
     home = Path('.')
-
+    
+    #Generate csv file for mel-specs & define path to that csv
     gen_csv_file(ms_dir, csv_name, col_names)
-    IMG_CSV = home / csv_name
-
-    ms_df = pd.read_csv(IMG_CSV)
+    ms_csv_path = home / csv_name
+    
+    #Read the mel-spec csv into a Pandas dataframe & reformat the indices
+    ms_df = pd.read_csv(ms_csv_path)
     ms_df = ms_df.sample(frac=1).reset_index(drop=True)
 
     X, y = gen_input_and_label_array(ms_dir, ms_df, img_shape)
+    #Normalise the image pixels to the range (0,1)
     X = X / 255
     
     return X, y, ms_df
