@@ -1,7 +1,7 @@
 # HumGuess - multi-class classification machine learning project
 
 In this repository, you will find helpful notebooks detailing the HumGuess project - where a machine learning approach is used to
-predict what song someone is singing/humming. This projecy was inspired by work from John Hartquist on an experimental [fast.ai audio classification module](https://towardsdatascience.com/audio-classification-using-fastai-and-on-the-fly-frequency-transforms-4dbe1b540f89), and by a CNN approach to [classifiying MNIST digits](https://medium.com/x8-the-ai-community/audio-classification-using-cnn-coding-example-f9cbd272269e). For a more techincal insight into the methods used, please consult these resources.
+predict what song someone is singing/humming. This project was inspired by work from John Hartquist on an experimental [fast.ai audio classification module](https://towardsdatascience.com/audio-classification-using-fastai-and-on-the-fly-frequency-transforms-4dbe1b540f89), and by a CNN approach to [classifiying MNIST digits](https://medium.com/x8-the-ai-community/audio-classification-using-cnn-coding-example-f9cbd272269e). For a more techincal insight into the methods used, please consult these resources.
 
 ## Table of Contents
 
@@ -23,7 +23,7 @@ The model is trained on three accents currently, just to demonstrate that this s
 
 One major drawback to this approach is scalability: there are millions of songs out there, and more being released every day. This means that in order for this approach to be super robust, the model would have to be able to correctly identify millions of songs, but even if you got that to work, it would need to be retrained every time to account for new songs being released. So clearly, that isn't feasible!
 
-With the high-level introduction out the way, we move onto the setup, where we introduce the packages and dependencies that are needed.
+With the high-level introduction out the way, let's move onto the setup, and introduce the packages and dependencies that are needed.
 
 
 ## Setup
@@ -31,7 +31,7 @@ With the high-level introduction out the way, we move onto the setup, where we i
 The following tools/dependencies were used in the project:
 * [Python](https://www.python.org/) - version 3.7.3
 * [Tensorflow](https://www.tensorflow.org/) - high-level machine learning framework, version 1.14.0
-* (recommended) [Anaconda](https://www.anaconda.com/) - Data science distribution (comes with Jupyter notebook), version 4.7.5
+* (recommended) [Anaconda](https://www.anaconda.com/) - Data science distribution (comes with Jupyter notebook), version 4.7.5 (Jupyter notebooks are super helpful!)
 * [pydub](https://pypi.org/project/pydub/) - audio package for Python, version 0.23.1
 * [librosa](https://librosa.github.io/librosa/) - audio package for Python, version 0.6.3
 
@@ -41,7 +41,7 @@ The following tools/dependencies were used in the project:
 The first step is to create the input data, namely the mel-spectrograms that will be fed into the CNN. All operations are sheltered under the`generate_data` function in `util_functs.py`, but I will go through the indiviidual steps of the data generation anyway.
 
 
-The first task is to create our **input clips** from which mel-spectrograms are produced. The clips are 6 seconds in length (a number I found to be reasonably short enough for song prediction, but it is tunable). This code snippet illustrates the clip generation process:
+The first task is to create our **input clips** from which mel-spectrograms are produced. The clips are 6 seconds in length; I found this to be reasonably short enough for song prediction, but this is tunable. This code snippet illustrates the clip generation process:
 
 ```python
 from pydub import AudioSegment
@@ -58,10 +58,10 @@ for t in range(num_clips):
 ```
 This was taken from the `audio_splice` function in `util_functs.py`. Essentially, we load the song into memory, the length of which is represented in milliseconds (it's a pydub thing) and slide along it, extracting 6-esecond snippets at each step and saving them. 
 
-If you have knowledge of how CNNs work, you know that once the "filter" or "kernel" has performed the convolution operation on an area of the input image, it steps along to the next area with a certain stride. The output size of the convolution operation, (assuming no [padding](https://medium.com/@ayeshmanthaperera/what-is-padding-in-cnns-71b21fb0dd7)), is defined as `|(n - f) / s| + 1` | refers to the "floor" operation here), where `f` is the filter size. Although these are audio clips and not images, the same rule can be applied to a 1D temporal data stream (ie. an audio clip). We just take `n` to be the length of the raw audio song file, `f` to be the desired clip length, and `s` to be the step size when sliding along the audio file. 
+If you have knowledge of how CNNs work, you know that once the "filter" or "kernel" has performed the convolution operation on an area of the input image, it steps along to the next area with a certain stride. The output size of the convolution operation, assuming no [padding](https://medium.com/@ayeshmanthaperera/what-is-padding-in-cnns-71b21fb0dd7), is defined as `|(n - f) / s| + 1` (| refers to the "floor" operation here), where `f` is the filter size. Although these are audio clips and not images, the same rule can be applied to a 1D temporal data stream (ie. an audio clip). We just take `n` to be the length of the raw audio song file, `f` to be the desired clip length, and `s` to be the step size when sliding along the audio file. 
 
 
-Next, we generate the **mel-spectrograms**. These are plots of the most common frequencies from the input audio signals, mapped to a logarithmic scale (or "mel" scale) since these humans process noise on these scales. The code snippet below illustrates how the plots are generated:
+Next, we generate the **mel-spectrograms**. These are plots of the most common frequencies from the input audio signals, mapped to a logarithmic scale (or "mel" scale) since humans process noise on these scales. The code snippet below illustrates how the plots are generated:
 
 ```python
     
@@ -69,15 +69,18 @@ Next, we generate the **mel-spectrograms**. These are plots of the most common f
    from os import splitext
    my_dpi=96
    
-   fname = splitext(clip_path)[0]
-   label = clip_path[0]
-        
+   fname = splitext(clip_path)[0] # Seperates file name into name + extension, and takes the name
+   label = clip_path[0] # Label appears at the beginning of clip file name (ie. 1_IT_clip2)
+   
+   #Load clip, then generate/post-process mel-spectogram
    clip, sample_rate = librosa.load(clip_path, sr=None)
+   #Generate mel-spectrogram
    mel_spec = librosa.feature.melspectrogram(clip, n_fft=n_fft, hop_length=n_hop,
                                           n_mels=n_mels, sr=sample_rate, power=1.0, 
                                           fmin=fmin, fmax=fmax)
    mel_spec_db = librosa.amplitude_to_db(mel_spec, ref=np.max)
-        
+   
+   #Plot the resulting spectogram
    plt.figure(figsize=(50/my_dpi, 34/my_dpi), dpi=my_dpi) #(34,50)
    librosa.display.specshow(mel_spec_db,
                                  sr=sample_rate, hop_length=n_hop,
@@ -122,7 +125,7 @@ model.compile(loss = "categorical_crossentropy", optimizer = 'adam',
               metrics=['accuracy'])
 model.fit(X_train, y_train_oh, batch_size=16, epochs=50, verbose=1, validation_split=0.20)
 ```
-where `X_train` contains the image arrays and `y_train_oh` is the [one-hot encoding](https://machinelearningmastery.com/why-one-hot-encode-data-in-machine-learning/) of the labels. `validation_split=0.20` means that 20% of the data is used as the validation set.
+where `X_train` contains the image arrays and `y_train_oh` is the [one-hot encoding](https://machinelearningmastery.com/why-one-hot-encode-data-in-machine-learning/) vector of the labels. `validation_split=0.20` means that 20% of the data is used as the validation set.
 
 After the model runs, we save the output model and make a prediction on the test set (see `TestModel.ipynb`):
 
